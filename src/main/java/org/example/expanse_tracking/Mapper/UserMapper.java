@@ -3,6 +3,7 @@ package org.example.expanse_tracking.Mapper;
 
 import org.example.expanse_tracking.Dto.Request.SignUpRequest;
 import org.example.expanse_tracking.Dto.Response.SignUpResponse;
+import org.example.expanse_tracking.Dto.Response.LoginResponse;
 import org.example.expanse_tracking.Entity.User;
 import org.example.expanse_tracking.Enums.Role;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,15 @@ public class UserMapper {
                 .email(user.getEmail())
                 .role(user.getRole())
                 .createdAt(user.getCreatedAt())
+                .build();
+    }
+
+    public LoginResponse toLoginResponse(User user) {
+        return LoginResponse.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .role(user.getRole())
                 .build();
     }
 }
