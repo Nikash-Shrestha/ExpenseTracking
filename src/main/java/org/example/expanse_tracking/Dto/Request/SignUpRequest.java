@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RegisterRequest {
+public class SignUpRequest {
 
     @NotBlank(message = "Full name is required")
     @Size(max = 100, message = "Full name cannot exceed 100 characters")

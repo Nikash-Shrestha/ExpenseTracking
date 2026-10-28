@@ -1,45 +1,46 @@
+
 package org.example.expanse_tracking.Dao;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.example.expanse_tracking.Dto.Request.RegisterRequest;
-import org.example.expanse_tracking.Dto.Response.UserResponse;
+import org.example.expanse_tracking.Dto.Request.SignUpRequest;
+import org.example.expanse_tracking.Dto.Response.SignUpResponse;
 import org.example.expanse_tracking.Entity.User;
-import org.example.expanse_tracking.Enums.Role;
+import org.example.expanse_tracking.Mapper.UserMapper;
 import org.example.expanse_tracking.Repository.UserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
-public class UserDaoImpl implements UserDao{
+public class UserDaoImpl implements UserDao {
+
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     @Override
-    @Transactional
-    public UserResponse register(RegisterRequest request) {
+    public SignUpResponse register(SignUpRequest request) {
 
+        // Check whether the email is already registered
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException(
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
                     "Email is already registered"
             );
         }
 
-        User user = User.builder()
-                .fullName(request.getFullName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .build();
+        // Convert request to User entity and encode password
+        String encodedPassword =
+                passwordEncoder.encode(request.getPassword());
 
+        User user = userMapper.toEntity(request, encodedPassword);
+
+        // Save user to PostgreSQL
         User savedUser = userRepository.save(user);
 
-        return UserResponse.builder()
-                .id(savedUser.getId())
-                .fullName(savedUser.getFullName())
-                .email(savedUser.getEmail())
-                .role(savedUser.getRole())
-                .build();
+        // Convert saved entity to response DTO
+        return userMapper.toResponse(savedUser);
     }
 }

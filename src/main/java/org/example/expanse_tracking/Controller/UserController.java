@@ -1,10 +1,11 @@
+
 package org.example.expanse_tracking.Controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.expanse_tracking.Dao.UserDao;
-import org.example.expanse_tracking.Dto.Request.RegisterRequest;
-import org.example.expanse_tracking.Dto.Response.UserResponse;
+import org.example.expanse_tracking.Dto.Request.SignUpRequest;
+import org.example.expanse_tracking.Dto.Response.SignUpResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,12 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserDao userService;
+    private final UserDao userDao;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse register(
-            @Valid @RequestBody RegisterRequest request) {
-        return userService.register(request);
+    public SignUpResponse register(
+            @Valid @RequestBody SignUpRequest request) {
+        return userDao.register(request);
     }
 }
