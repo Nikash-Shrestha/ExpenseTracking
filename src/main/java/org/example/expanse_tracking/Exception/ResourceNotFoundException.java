@@ -1,4 +1,3 @@
-
 package org.example.expanse_tracking.Exception;
 
 public class ResourceNotFoundException extends RuntimeException {
