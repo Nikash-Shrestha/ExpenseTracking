@@ -3,17 +3,12 @@ package org.example.expanse_tracking.Dto.Request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-public class LoginRequest {
+public record LoginRequest(
+        @NotBlank(message = "Email is required")
+        @Email(message = "Please enter a valid email")
+        String email,
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Please enter a valid email")
-    private String email;
-
-    @NotBlank(message = "Password is required")
-    private String password;
-}
+        @NotBlank(message = "Password is required")
+        String password
+) {}

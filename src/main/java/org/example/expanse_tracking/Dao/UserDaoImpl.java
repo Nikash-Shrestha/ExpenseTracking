@@ -1,4 +1,3 @@
-
 package org.example.expanse_tracking.Dao;
 
 import lombok.RequiredArgsConstructor;
@@ -30,16 +29,17 @@ public class UserDaoImpl implements UserDao {
     @Override
     public SignUpResponse register(SignUpRequest request) {
 
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new AlreadyExistsException(
                     "Email is already registered"
             );
         }
 
-        User user = userMapper.toEntity(
-                request,
-                passwordEncoder.encode(request.getPassword())
-        );
+        // Map request to entity
+        User user = userMapper.toEntity(request);
+
+        // Encode password before saving
+        user.setPassword(passwordEncoder.encode(request.password()));
 
         User savedUser = userRepository.save(user);
 
@@ -50,8 +50,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public LoginResponse login(LoginRequest request) {
 
-        // Find user by email
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() ->
                         new BadCredentialsException(
                                 "Invalid email or password"
@@ -60,7 +59,7 @@ public class UserDaoImpl implements UserDao {
 
         // Verify password
         if (!passwordEncoder.matches(
-                request.getPassword(),
+                request.password(),
                 user.getPassword()
         )) {
             throw new BadCredentialsException(
@@ -74,12 +73,13 @@ public class UserDaoImpl implements UserDao {
                 Set.of(user.getRole().name())
         );
 
-
-        LoginResponse response = userMapper.toLoginResponse(user);
-
-        // Attach JWT to response
-        response.setToken(token);
-
-        return response;
+        // Return immutable LoginResponse with token
+        return new LoginResponse(
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getRole(),
+                token
+        );
     }
 }

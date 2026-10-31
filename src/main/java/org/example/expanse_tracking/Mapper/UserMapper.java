@@ -1,41 +1,23 @@
-
 package org.example.expanse_tracking.Mapper;
 
 import org.example.expanse_tracking.Dto.Request.SignUpRequest;
 import org.example.expanse_tracking.Dto.Response.SignUpResponse;
 import org.example.expanse_tracking.Dto.Response.LoginResponse;
 import org.example.expanse_tracking.Entity.User;
-import org.example.expanse_tracking.Enums.Role;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class UserMapper {
+@Mapper(componentModel = "spring")
+public interface UserMapper {
 
-    public User toEntity(SignUpRequest request, String encodedPassword) {
-        return User.builder()
-                .fullName(request.getFullName())
-                .email(request.getEmail())
-                .password(encodedPassword)
-                .role(Role.USER)
-                .build();
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "role", constant = "USER")
+    @Mapping(target = "createdAt", ignore = true)
+    User toEntity(SignUpRequest request);
 
-    public SignUpResponse toResponse(User user) {
-        return SignUpResponse.builder()
-                .id(user.getId())
-                .fullName(user.getFullName())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .createdAt(user.getCreatedAt())
-                .build();
-    }
+    SignUpResponse toResponse(User user);
 
-    public LoginResponse toLoginResponse(User user) {
-        return LoginResponse.builder()
-                .id(user.getId())
-                .fullName(user.getFullName())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build();
-    }
+    @Mapping(target = "token", ignore = true)
+    LoginResponse toLoginResponse(User user);
 }
