@@ -4,9 +4,13 @@ package org.example.expanse_tracking.Mapper;
 import org.example.expanse_tracking.Dto.Request.ExpenseRequest;
 import org.example.expanse_tracking.Dto.Response.ExpenseResponse;
 import org.example.expanse_tracking.Entity.Expense;
+import org.example.expanse_tracking.Entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ExpenseMapper {
@@ -21,4 +25,5 @@ public interface ExpenseMapper {
             ExpenseRequest request,
             @MappingTarget Expense expense
     );
+
 }
